@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793467972997,
+      "tag": "0000_common_the_watchers",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793475372297,
+      "tag": "0001_silly_the_hunter",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793475770697,
+      "tag": "0002_brief_redwing",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793475827357,
+      "tag": "0003_reflective_shaman",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793476076357,
+      "tag": "0004_misty_pretty_boy",
+      "breakpoints": true
+    }
+  ]
+}
