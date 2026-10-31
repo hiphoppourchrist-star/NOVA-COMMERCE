@@ -7,8 +7,6 @@ import { db } from "@/db/client";
 import { products, productVariants } from "@/db/schema";
 import { getAdminContext } from "@/lib/admin/authorization";
 
-export const instant = false;
-
 export default async function AdminPage() {
   await connection();
   const { user, configured, isAdmin, configurationError } = await getAdminContext();

@@ -2,7 +2,6 @@ import { and, asc, eq, gte, ilike, lte } from "drizzle-orm";
 import Link from "next/link";
 import { db } from "@/db/client";
 import { categories, products } from "@/db/schema";
-export const instant = false;
 const money = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
 export default async function CataloguePage({ searchParams }: { searchParams: Promise<{ q?: string; min?: string; max?: string; category?: string }> }) {
   const params = await searchParams;

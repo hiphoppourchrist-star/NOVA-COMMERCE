@@ -5,7 +5,6 @@ import { db } from "@/db/client";
 import { products } from "@/db/schema";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 
-export const instant = false;
 const money = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
