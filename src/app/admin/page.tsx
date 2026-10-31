@@ -11,7 +11,20 @@ export const instant = false;
 
 export default async function AdminPage() {
   await connection();
-  const { user, configured, isAdmin } = await getAdminContext();
+  const { user, configured, isAdmin, configurationError } = await getAdminContext();
+
+  if (configurationError) {
+    return (
+      <main className="site-shell auth-page">
+        <div className="auth-card">
+          <p className="eyebrow">Configuration requise</p>
+          <h1>Neon Auth.</h1>
+          <p>{configurationError}</p>
+          <p>Ajoutez les variables sécurisées requises dans Vercel, puis relancez le déploiement.</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!user) {
     return (

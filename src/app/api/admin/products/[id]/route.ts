@@ -15,7 +15,8 @@ const updateInput = z.object({
 const productId = z.uuid();
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminContext();
+  const { isAdmin, configurationError } = await getAdminContext();
+  if (configurationError) return NextResponse.json({ error: configurationError }, { status: 503 });
   if (!isAdmin) return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
   if (!db) return NextResponse.json({ error: "Base non configurée." }, { status: 503 });
 
@@ -29,7 +30,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   return product ? NextResponse.json({ product }) : NextResponse.json({ error: "Produit introuvable." }, { status: 404 });
 }
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminContext();
+  const { isAdmin, configurationError } = await getAdminContext();
+  if (configurationError) return NextResponse.json({ error: configurationError }, { status: 503 });
   if (!isAdmin) return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
   if (!db) return NextResponse.json({ error: "Base non configurée." }, { status: 503 });
 

@@ -14,13 +14,15 @@ const productInput = z.object({
 });
 
 export async function GET() {
-  const { isAdmin } = await getAdminContext();
+  const { isAdmin, configurationError } = await getAdminContext();
+  if (configurationError) return NextResponse.json({ error: configurationError }, { status: 503 });
   if (!isAdmin) return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
   if (!db) return NextResponse.json({ products: [] });
   return NextResponse.json({ products: await db.select().from(products).orderBy(asc(products.createdAt)) });
 }
 export async function POST(request: Request) {
-  const { isAdmin } = await getAdminContext();
+  const { isAdmin, configurationError } = await getAdminContext();
+  if (configurationError) return NextResponse.json({ error: configurationError }, { status: 503 });
   if (!isAdmin) return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
   if (!db) return NextResponse.json({ error: "Base non configurée." }, { status: 503 });
 
