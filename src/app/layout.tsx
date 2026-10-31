@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: "Nova Commerce",
     template: "%s | Nova Commerce",
   },
-  description: "Template e-commerce premium, accessible et personnalisable.",
+  description: "Application e-commerce premium, accessible et simple à administrer.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

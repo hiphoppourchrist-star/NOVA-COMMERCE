@@ -6,7 +6,7 @@ Le développement local peut continuer sans bloquer sur ces sujets. Les valeurs 
 
 | Sujet | Décision attendue |
 |---|---|
-| Identité visuelle | Logo, couleurs, typographies et visuels propres au client |
+| Identité visuelle | Logo, couleurs, typographies et visuels de Nova Commerce |
 | Catalogue | Catégories, descriptions, prix, devise et variantes à publier |
 | WhatsApp | Numéro professionnel international et message commercial souhaité |
 | Contenus | Mentions légales, confidentialité, retours et coordonnées |
@@ -15,7 +15,7 @@ Le développement local peut continuer sans bloquer sur ces sujets. Les valeurs 
 
 ## Hypothèses actuelles
 
-- Une installation correspond à une boutique, un projet Vercel et une base Neon.
+- Nova Commerce utilise un projet Vercel et une base Neon dédiés.
 - Les visiteurs ne créent pas de compte et aucune donnée client n'est stockée par l'application.
 - L'intérêt pour un produit est traité hors application dans WhatsApp.
 - L'administrateur est identifié par Neon Auth et autorisé par `ADMIN_EMAILS`.
@@ -24,4 +24,5 @@ Le développement local peut continuer sans bloquer sur ces sujets. Les valeurs 
 
 ## Intervention du propriétaire
 
-Le propriétaire doit saisir les secrets uniquement dans les variables sécurisées de l'environnement concerné. Il ne doit jamais les envoyer dans le chat ni les committer. La configuration Vercel, le domaine/DNS et la publication production nécessitent une validation explicite.
+Le propriétaire doit saisir les secrets uniquement dans les variables sécurisées de l'environnement concerné. Il ne doit jamais les envoyer dans le chat ni les committer. La configuration Vercel, le domaine/DNS et la publication Production nécessitent une validation explicite.
+

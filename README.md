@@ -1,17 +1,18 @@
 # Nova Commerce
 
-Template de boutique e-commerce simplifiée : catalogue par catégories, prix visibles et prise de contact WhatsApp avec l’administrateur.
+Nova Commerce est une application e-commerce simplifiée pour présenter un catalogue par catégories, afficher les prix et permettre aux visiteurs de contacter l'administrateur sur WhatsApp.
 
-## Périmètre
+## Fonctionnalités
 
-- Interface publique sans compte visiteur/client.
-- Aucun panier, checkout, paiement ou module de livraison.
-- Uniquement un accès administrateur via Neon Auth.
-- Produits gérés depuis l’espace `/admin`.
-- PostgreSQL Neon avec Drizzle ORM.
-- Images administrables avec stockage objet Neon et URLs présignées.
+- Interface publique sans compte visiteur ou client.
+- Catalogue avec catégories, recherche, filtres et fiches produits.
+- Prix et disponibilité issus de PostgreSQL Neon.
+- Contact WhatsApp avec message prérempli pour chaque produit.
+- Accès administrateur via Neon Auth.
+- Gestion des produits depuis `/admin`.
+- Images stockées dans Neon Object Storage avec URLs présignées.
 
-Voir [le périmètre détaillé](./docs/SIMPLIFIED_SCOPE.md).
+Voir le [périmètre fonctionnel](./docs/SIMPLIFIED_SCOPE.md).
 
 ## Développement
 
@@ -23,8 +24,8 @@ npm run dev
 Variables importantes :
 
 - `DATABASE_URL` et `DATABASE_URL_UNPOOLED` pour Neon ;
-- `NEON_AUTH_BASE_URL` et `NEON_AUTH_COOKIE_SECRET` pour l’administration ;
-- `ADMIN_EMAILS` pour l’allowlist administrateur ;
+- `NEON_AUTH_BASE_URL` et `NEON_AUTH_COOKIE_SECRET` pour l'administration ;
+- `ADMIN_EMAILS` pour autoriser l'administrateur ;
 - `NEXT_PUBLIC_WHATSAPP_NUMBER` pour les boutons de contact.
 
 ## Contrôles
@@ -34,6 +35,8 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+npm audit
 ```
 
-Ne jamais ajouter de secret dans Git ou dans le chat. Voir [le guide de déploiement](./docs/DEPLOYMENT.md), [la sécurité](./docs/SECURITY.md) et [la checklist production](./docs/PRODUCTION_CHECKLIST.md).
+Ne jamais ajouter de secret dans Git ou dans le chat. Voir le [guide de déploiement](./docs/DEPLOYMENT.md), le [rapport de sécurité](./docs/SECURITY.md) et la [checklist de production](./docs/PRODUCTION_CHECKLIST.md).
+
