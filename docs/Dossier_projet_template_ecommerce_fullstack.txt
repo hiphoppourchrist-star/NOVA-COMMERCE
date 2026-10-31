@@ -1,0 +1,1112 @@
+DOSSIER DE PROJET — TEMPLATE E-COMMERCE FULL-STACK Version : 1.0 Date :
+31 octobre 2026 Langue : français Environnement de travail : VS Code
+Profil du porteur de projet : débutant en développement, réalisation
+assistée par IA (« vibe coding ») Comptes déjà disponibles : GitHub,
+Vercel et Neon
+
+======================================================================
+0. AVANT DE COMMENCER : CE QUE CE DOSSIER VA FAIRE
+======================================================================
+
+Ce dossier est conçu pour servir de cahier de charge, de fiche
+technique, de plan de réalisation, de règles de qualité et de prompt
+maître à donner à l’agent IA de développement dans VS Code.
+
+L’objectif n’est pas de créer une simple boutique de démonstration. Il
+s’agit de construire un socle e-commerce professionnel, réutilisable
+pour plusieurs clients, personnalisable sans réécrire toute
+l’application et suffisamment documenté pour être maintenu.
+
+IMPORTANT — AUTONOMIE ET SÉCURITÉ L’agent IA doit travailler de façon
+autonome pour les tâches ordinaires : analyser le dépôt, planifier,
+créer les fichiers, coder, lancer les commandes, tester, corriger les
+erreurs, documenter et recommencer jusqu’à ce que les critères de
+qualité soient satisfaits.
+
+Cependant, « autonomie totale » ne doit jamais signifier : - publier une
+application avec des secrets exposés ; - supprimer une base de données,
+des données ou des fichiers sans sauvegarde ; - exécuter une migration
+destructive en production ; - effectuer un paiement réel ou utiliser de
+vraies données bancaires pendant les tests ; - modifier des DNS,
+domaines, comptes, moyens de paiement ou paramètres de sécurité sans
+validation humaine ; - désactiver des contrôles de sécurité pour faire
+passer un test ; - inventer des clés API, des identifiants ou des
+résultats de tests ; - prétendre que le projet est terminé si des tests
+importants n’ont pas été exécutés.
+
+L’agent peut prendre seul les décisions techniques réversibles et les
+documenter. Il doit demander une intervention humaine uniquement
+lorsqu’un secret, une décision métier non spécifiée, un compte externe,
+une dépense, une action irréversible ou une validation légale est
+indispensable. S’il est bloqué, il doit expliquer précisément le
+blocage, proposer l’action la plus simple et continuer toutes les tâches
+indépendantes.
+
+Aucune IA ne peut garantir une sécurité absolue, une disponibilité de
+100 % ou une conformité juridique universelle. Le but est de mettre en
+place des pratiques solides, de vérifier les risques connus et de rendre
+les limites explicites.
+
+====================================================================== 1.
+VISION ET OBJECTIFS DU PRODUIT
+======================================================================
+
+1.1 Nom de travail « Nova Commerce » — nom provisoire à remplacer par un
+nom de marque définitif.
+
+1.2 Vision Créer un template de boutique en ligne full-stack moderne,
+rapide, élégant, accessible, administrable et sécurisé. Chaque nouveau
+client doit pouvoir obtenir sa propre boutique à partir du même socle
+logiciel, avec son identité visuelle, son catalogue, ses règles
+commerciales, ses moyens de paiement, ses coordonnées et ses paramètres.
+
+1.3 Principe de réutilisation Le produit initial est un template
+déployable séparément pour chaque client (une installation et une base
+de données par client). Il ne faut PAS construire automatiquement une
+plateforme SaaS multi-entreprises partageant toutes les données dans une
+seule base.
+
+Cette approche « une boutique = un déploiement = une base » réduit la
+complexité et le risque de fuite entre clients. Une architecture
+multi-tenant pourra être étudiée plus tard dans une version distincte,
+avec isolation stricte des données, tests spécifiques et exigences de
+sécurité supplémentaires.
+
+1.4 Objectifs principaux - Permettre à un visiteur de découvrir,
+rechercher et acheter des produits. - Permettre à un administrateur de
+gérer produits, catégories, stocks, commandes, clients, promotions et
+contenus. - Gérer le parcours de commande de bout en bout. - Prévoir
+plusieurs moyens de paiement via des intégrations remplaçables. -
+Prévoir livraison, retrait ou remise en main propre selon
+configuration. - Offrir une expérience mobile-first et accessible. -
+Fournir une interface d’administration claire. - Permettre la
+personnalisation par client via configuration et thème. - Être testable,
+maintenable, documenté et déployable sur Vercel avec une base Neon. - Ne
+jamais considérer une commande comme payée sur la seule base d’une
+réponse du navigateur.
+
+1.5 Indicateurs de réussite - Un visiteur peut parcourir le catalogue et
+passer une commande de test. - Le stock et les montants sont recalculés
+côté serveur. - Un paiement n’est confirmé qu’après vérification serveur
+du fournisseur ou d’une preuve fiable. - Un administrateur autorisé peut
+gérer la boutique. - Les parcours essentiels sont couverts par des
+tests. - Les erreurs sont journalisées sans exposer de secrets ni de
+données sensibles. - Le projet peut être cloné et configuré pour un
+nouveau client en suivant le guide. - Le déploiement de production ne
+contient aucune clé secrète dans le code source.
+
+======================================================================
+2. UTILISATEURS ET RÔLES
+======================================================================
+
+2.1 Visiteur - Consulte la page d’accueil, le catalogue, les catégories
+et les fiches produits. - Recherche, filtre et trie les produits. -
+Consulte les informations de livraison, retours, confidentialité et
+contact. - Ajoute des articles au panier. - Peut commencer une commande
+sans créer de compte si le mode invité est activé.
+
+2.2 Client connecté - Dispose des fonctionnalités du visiteur. -
+Consulte et modifie les informations de profil autorisées. - Consulte
+ses commandes et leur statut. - Gère ses adresses si cette fonction est
+activée. - Peut demander une réinitialisation de mot de passe. - Ne peut
+jamais consulter les commandes ou données d’un autre client.
+
+2.3 Administrateur - Accède à un espace d’administration protégé. - Gère
+le catalogue, les catégories, les stocks, les commandes, les clients,
+les promotions et les contenus. - Consulte des indicateurs d’activité. -
+Gère les paramètres non sensibles de la boutique. - Ne voit que les
+données nécessaires à son rôle.
+
+2.4 Super-administrateur / propriétaire - Gère les comptes
+administrateurs et leurs permissions. - Accède aux paramètres sensibles
+de la boutique. - Peut consulter les journaux d’audit. - Peut configurer
+les intégrations, dans la limite des secrets fournis via les variables
+d’environnement.
+
+2.5 Principe d’autorisation Les permissions sont vérifiées côté serveur
+à chaque opération sensible. Masquer un bouton dans l’interface ne
+constitue jamais une protection. Le système applique le principe du
+moindre privilège.
+
+======================================================================
+3. PÉRIMÈTRE FONCTIONNEL
+======================================================================
+
+3.1 Boutique publique
+
+A. Accueil - Bannière principale configurable. - Mise en avant de
+catégories, nouveautés, meilleures ventes et promotions. - Blocs
+éditoriaux configurables. - Appels à l’action clairs. - Pied de page
+avec coordonnées, réseaux sociaux, liens légaux et moyens de paiement
+acceptés. - Aucun contenu fictif ne doit être présenté comme une
+information réelle en production.
+
+B. Catalogue - Liste paginée ou chargement progressif. - Catégories et
+sous-catégories. - Recherche textuelle. - Filtres : catégorie, prix,
+disponibilité et attributs pertinents. - Tri : nouveautés, prix
+croissant/décroissant, popularité si les données existent. - État vide
+explicite lorsqu’aucun produit ne correspond. - URL partageable pour les
+filtres lorsque possible.
+
+C. Fiche produit - Nom, description courte et détaillée. - Images
+optimisées et galerie. - Prix, prix promotionnel si applicable. -
+Disponibilité et stock selon la politique choisie. - Variantes : taille,
+couleur, format, etc. - SKU ou référence interne. - Quantité
+sélectionnable. - Produits associés. - Informations de livraison et de
+retour. - Données structurées SEO pertinentes. - Contrôle serveur de la
+disponibilité au moment de l’ajout au panier et de la commande.
+
+D. Panier - Ajouter, retirer et modifier les quantités. - Afficher prix
+unitaire, sous-total, réduction, livraison estimée et total. -
+Persistance raisonnable du panier. - Recalcul du prix côté serveur avant
+la commande. - Refus des quantités invalides ou supérieures au stock
+autorisé. - Ne jamais faire confiance aux prix transmis par le
+navigateur.
+
+E. Commande / checkout - Coordonnées client. - Adresse de livraison ou
+mode de retrait. - Récapitulatif complet. - Code promotionnel si
+activé. - Acceptation explicite des conditions applicables. - Choix du
+moyen de paiement disponible. - Validation serveur de tous les champs. -
+Création d’une commande avec statut initial approprié. - Protection
+contre les doubles soumissions et requêtes répétées. - Page de
+confirmation ne déclarant le paiement réussi qu’après confirmation
+fiable. - Parcours de commande invité configurable.
+
+F. Compte client - Inscription et connexion. - Déconnexion. -
+Vérification d’adresse e-mail si le fournisseur de messagerie est
+configuré. - Mot de passe oublié et réinitialisation sécurisée. - Profil
+et adresses. - Historique des commandes. - Détail d’une commande et
+statut. - Fermeture ou demande de suppression de compte selon les
+obligations de conservation applicables. - Limitation des tentatives de
+connexion et protections contre l’énumération des comptes.
+
+G. Pages de confiance - À propos. - Contact. - FAQ. - Livraison. -
+Retours et remboursements. - Conditions générales de vente. - Politique
+de confidentialité. - Politique relative aux cookies si nécessaire. -
+Mentions légales et informations de l’entreprise. Les textes juridiques
+doivent être validés par le client ou un professionnel compétent dans le
+pays où la boutique opère. L’IA ne doit pas inventer des numéros
+d’entreprise, adresses ou obligations légales.
+
+3.2 Administration
+
+A. Tableau de bord - Nombre de commandes selon période. - Chiffre
+d’affaires selon définition explicite (commandes payées, annulées
+exclues, remboursements traités). - Commandes récentes. - Produits à
+faible stock. - Indicateurs utiles, sans afficher de statistiques
+inventées. - Filtres temporels.
+
+B. Produits - Créer, modifier, archiver et supprimer selon règles de
+dépendance. - Nom, slug, descriptions, SKU, prix, prix promotionnel. -
+Images et texte alternatif. - Catégorie, tags et attributs. - Variantes
+et stock par variante si activés. - Statut brouillon/publié/archivé. -
+Gestion des produits physiques et, si nécessaire, numériques dans une
+phase séparée. - Validation des prix et des quantités côté serveur. -
+Historique des modifications sensibles recommandé.
+
+C. Catégories - Créer, modifier, ordonner, activer/désactiver. -
+Catégories imbriquées si utile. - Empêcher les boucles et références
+invalides.
+
+D. Stock - Quantité disponible. - Seuil d’alerte. - Journal des
+mouvements recommandé. - Réservation temporaire ou décrémentation au
+moment approprié, selon le parcours de paiement. - Éviter les ventes
+concurrentes au-delà du stock disponible. - Toute opération de stock
+doit être atomique en base de données.
+
+E. Commandes - Liste, recherche et filtres. - Détail complet. - Statuts
+: en attente, paiement en cours, payée, en préparation, expédiée,
+livrée, annulée, remboursée, échec de paiement (adapter le modèle sans
+ambiguïté). - Historique des changements. - Notes internes. - Mise à
+jour contrôlée du statut. - Envoi de notifications si le service est
+configuré. - Une modification manuelle ne doit pas falsifier un paiement
+fournisseur.
+
+F. Clients - Recherche et consultation des profils. - Historique de
+commandes. - Pas d’affichage des mots de passe, tokens ou secrets. -
+Export uniquement si autorisé, justifié et protégé.
+
+G. Promotions - Codes promotionnels. - Date de début et de fin. -
+Montant fixe ou pourcentage. - Limite d’utilisation totale et par
+client. - Minimum de commande. - Produits ou catégories éligibles. -
+Règles de cumul explicites. - Vérification serveur et prévention des
+abus.
+
+H. Contenus et configuration - Bannière, textes, liens, coordonnées,
+logo et identité visuelle. - Devise, fuseau horaire et format de date. -
+Modes de livraison et de retrait. - Moyens de paiement activés. -
+Paramètres SEO. - Coordonnées de support. - Paramètres sensibles via
+variables d’environnement, jamais en clair dans la base sans stratégie
+de chiffrement appropriée.
+
+3.3 Fonctions avancées à prévoir sans les rendre bloquantes pour le
+MVP - Avis et notes produits avec modération. - Liste de souhaits. -
+Comparaison de produits. - Relance de panier abandonné avec consentement
+et fournisseur configuré. - Factures PDF. - Bons de réduction avancés. -
+Gestion de plusieurs entrepôts. - Import/export CSV. - Recherche
+avancée. - Notifications SMS ou WhatsApp via fournisseur approprié. -
+Multilingue. - Multi-devise. - Produits numériques. - Programme de
+fidélité. - API publique documentée. - Webhooks sortants. Ces éléments
+doivent être activés progressivement. Ne pas construire des fonctions
+complexes non nécessaires avant que les parcours de vente essentiels
+soient fiables.
+
+======================================================================
+4. DIRECTION ARTISTIQUE ET EXPÉRIENCE UTILISATEUR
+======================================================================
+
+4.1 Concept visuel Créer une interface futuriste, premium, joyeuse et
+intuitive, sur fond sombre. Le rendu doit être moderne et distinctif,
+mais pas surchargé.
+
+4.2 Palette indicative - Fond principal : bleu nuit / charbon très
+sombre. - Surfaces : gris ardoise profond. - Texte principal : blanc
+cassé. - Texte secondaire : gris clair lisible. - Couleur d’accent
+principale : violet électrique ou indigo. - Accent secondaire : cyan
+lumineux. - Accent positif : vert menthe. - Accent promotionnel : corail
+ou orange chaud. - États d’erreur : rouge accessible. La palette finale
+doit être centralisée dans des variables de thème et respecter les
+contrastes WCAG.
+
+4.3 Principes UI - Mobile-first. - Navigation claire. - Typographie
+moderne et lisible. - Espacements cohérents. - Cartes produits
+élégantes. - Images de bonne qualité. - Micro-interactions sobres. -
+Transitions courtes, non indispensables à la compréhension. - États de
+chargement, erreur, succès et vide conçus. - Pas d’animations agressives
+ni de mouvements excessifs. - Respect de prefers-reduced-motion. -
+Boutons et zones interactives adaptés au tactile. - Formulaires avec
+labels, erreurs compréhensibles et indication des champs requis. -
+Éviter les effets glassmorphism excessifs qui nuisent à la lisibilité. -
+L’administration doit privilégier la productivité à l’effet visuel.
+
+4.4 Accessibilité - Navigation complète au clavier. - Focus visible. -
+Contrastes suffisants. - Structure de titres cohérente. - Labels
+explicites. - Textes alternatifs utiles. - Messages d’erreur associés
+aux champs. - Composants compatibles avec les technologies
+d’assistance. - Cible : WCAG 2.2 niveau AA dans la mesure du possible,
+avec vérifications automatisées et manuelles.
+
+======================================================================
+5. ARCHITECTURE TECHNIQUE RECOMMANDÉE
+======================================================================
+
+5.1 Stack de départ L’agent doit vérifier les versions stables et
+compatibles au moment de l’initialisation, puis figer les versions
+utilisées dans le fichier de dépendances et le lockfile.
+
+-   Éditeur : Visual Studio Code.
+-   Langage : TypeScript en mode strict.
+-   Framework full-stack : Next.js avec App Router.
+-   Interface : React.
+-   Styles : Tailwind CSS.
+-   Composants : bibliothèque accessible de type shadcn/ui ou composants
+    maison basés sur primitives accessibles.
+-   Icônes : bibliothèque cohérente, par exemple Lucide.
+-   Base de données : PostgreSQL hébergé sur Neon.
+-   ORM : Prisma ou Drizzle. Choisir un seul ORM et ne pas mélanger les
+    deux.
+-   Validation : Zod ou équivalent, avec schémas partagés lorsque
+    pertinent.
+-   Authentification : solution maintenue compatible Next.js, avec
+    sessions sécurisées. L’agent doit comparer les options actuelles et
+    choisir une solution éprouvée plutôt que coder une authentification
+    maison.
+-   Hébergement : Vercel.
+-   Dépôt et historique : GitHub.
+-   Tests unitaires/intégration : Vitest ou Jest, selon compatibilité.
+-   Tests navigateur : Playwright.
+-   Qualité : ESLint, Prettier et vérification TypeScript.
+-   Observabilité : journalisation structurée et outil de suivi
+    d’erreurs configurable.
+-   Images : stockage objet externe compatible S3 ou service d’images
+    adapté. Ne pas dépendre du système de fichiers éphémère de Vercel
+    pour conserver les fichiers téléversés.
+-   E-mails : fournisseur transactionnel configurable.
+-   Paiements : adaptateurs fournisseurs, choisis selon pays, devise,
+    contrat et disponibilité réelle.
+
+Ne pas installer toutes les bibliothèques possibles. Chaque dépendance
+doit avoir une raison documentée.
+
+5.2 Architecture logique - Présentation : pages et composants
+d’interface. - Application : cas d’usage et orchestration métier. -
+Domaine : règles métier, calculs, états de commande, stock et
+promotions. - Infrastructure : base de données, e-mail, paiement,
+stockage, journalisation. - Validation : schémas côté serveur. -
+Autorisation : contrôles centralisés et vérifiés côté serveur. - Tests :
+unitaires, intégration, end-to-end.
+
+Les composants d’interface ne doivent pas contenir seuls les règles
+critiques de prix, stock ou paiement.
+
+5.3 Structure de dépôt indicative src/ app/ (store)/ (auth)/ admin/ api/
+components/ ui/ store/ admin/ forms/ config/ lib/ auth/ db/ payments/
+email/ storage/ security/ logging/ server/ actions/ services/
+repositories/ domain/ catalog/ cart/ orders/ inventory/ pricing/
+promotions/ schemas/ types/ styles/ tests/ prisma/ ou drizzle/ schema et
+migrations public/ images/ docs/ architecture/ decisions/ operations/
+client-setup/ scripts/ seed/ maintenance/ La structure réelle peut être
+adaptée, mais elle doit rester claire et documentée. Ne pas créer des
+couches vides sans utilité.
+
+5.4 Règles de conception - TypeScript strict ; éviter any. - Séparer
+code client et code serveur. - Aucun secret dans les composants
+client. - Aucun accès direct non contrôlé à la base depuis le
+navigateur. - Les opérations métier critiques sont exécutées côté
+serveur. - Utiliser des transactions SQL pour les opérations liées
+(commande, stock, paiement). - Utiliser des contraintes de base de
+données : clés étrangères, unicité, non-null, index et checks
+pertinents. - Les dates sont stockées de manière cohérente en UTC et
+affichées selon le fuseau configuré. - Les montants sont manipulés en
+unités monétaires mineures (par exemple centimes) ou avec un type
+décimal exact ; jamais avec des flottants binaires ordinaires pour les
+calculs monétaires. - La devise est explicite sur chaque contexte de
+prix/commande. - Les slugs et identifiants sont uniques selon le
+besoin. - Les suppressions d’entités liées aux commandes doivent être
+empêchées ou remplacées par archivage. - Toute décision d’architecture
+importante est inscrite dans docs/decisions/.
+
+======================================================================
+6. MODÈLE DE DONNÉES INDICATIF
+======================================================================
+
+L’agent doit produire un diagramme relationnel et un schéma ORM
+cohérent. Les entités suivantes constituent le socle à adapter.
+
+-   User : identifiant, nom, e-mail normalisé, rôle, statut, dates.
+-   AuthAccount / Session : selon la solution d’authentification
+    retenue.
+-   Address : utilisateur, lignes d’adresse, ville, région, code postal
+    si applicable, pays, téléphone.
+-   Category : nom, slug, description, parent éventuel, statut.
+-   Product : nom, slug, description, SKU, prix, statut, catégorie,
+    métadonnées SEO.
+-   ProductImage : produit, URL de stockage, texte alternatif, ordre.
+-   ProductVariant : produit, options, SKU, prix éventuel, statut.
+-   InventoryItem : variante ou produit, quantité, seuil, emplacement
+    éventuel.
+-   InventoryMovement : quantité, motif, référence, acteur, date.
+-   Cart / CartItem : panier, produit/variante, quantité.
+-   Order : numéro public non séquentiel devinable, client éventuel,
+    e-mail, adresse snapshot, devise, totaux, statut, dates.
+-   OrderItem : nom/SKU/prix/quantité snapshot au moment de l’achat.
+-   Payment : fournisseur, référence fournisseur, montant, devise,
+    statut, données minimales nécessaires.
+-   PaymentEvent : identifiant événement fournisseur unique, type, date
+    de traitement.
+-   Shipment : méthode, transporteur, suivi, statut.
+-   Promotion : code, règles, dates, limites, statut.
+-   PromotionRedemption : commande, client, code, date.
+-   Review : produit, auteur, note, contenu, statut de modération.
+-   AuditLog : acteur, action, cible, horodatage, métadonnées expurgées.
+-   StoreSettings : paramètres publics non secrets.
+-   ContentPage : slug, titre, contenu, statut.
+-   IdempotencyKey : clé, opération, résultat/référence, expiration.
+
+Règles essentielles : - Les articles de commande conservent une copie du
+nom, SKU et prix au moment de la vente. Un changement ultérieur de
+produit ne modifie pas l’historique. - Les montants de commande sont
+recalculés côté serveur. - Les références de paiement sont uniques. -
+Les événements de paiement ont une contrainte d’unicité pour éviter le
+traitement multiple d’un même webhook. - Les suppressions en cascade ne
+doivent pas effacer les preuves nécessaires à l’historique des
+commandes. - Les données personnelles sont limitées au nécessaire. - Les
+journaux ne contiennent ni mot de passe, ni token, ni numéro de carte,
+ni secret.
+
+======================================================================
+7. SÉCURITÉ : EXIGENCES NON NÉGOCIABLES
+======================================================================
+
+La sécurité doit être intégrée dès le début et testée à chaque phase.
+L’agent doit utiliser les recommandations OWASP actuelles et vérifier
+les pratiques propres aux versions des outils retenus.
+
+7.1 Authentification - Utiliser une bibliothèque d’authentification
+maintenue. - Hachage de mots de passe avec un algorithme moderne adapté,
+géré par la solution retenue. - Cookies de session HttpOnly, Secure en
+production et SameSite approprié. - Rotation et expiration des
+sessions. - Révocation lors de déconnexion et d’événements sensibles. -
+Limitation des tentatives. - Réinitialisation par token à usage unique,
+expirant et stocké de manière sûre. - Vérification e-mail si le service
+est activé. - MFA pour les administrateurs fortement recommandé. - Ne
+jamais enregistrer de mot de passe en clair.
+
+7.2 Autorisation - Vérifier le rôle et la propriété des ressources sur
+le serveur. - Empêcher l’accès horizontal aux commandes et profils
+d’autres utilisateurs. - Refuser par défaut toute opération non
+explicitement autorisée. - Protéger toutes les routes et actions
+d’administration. - Tester les scénarios d’accès non autorisé.
+
+7.3 Validation et injection - Valider chaque entrée côté serveur. -
+Échapper/saniter les contenus riches selon leur usage. - Utiliser des
+requêtes paramétrées via ORM. - Ne jamais concaténer du SQL non
+fiable. - Limiter taille, type et fréquence des requêtes. - Vérifier les
+fichiers téléversés par type réel, taille et politique de stockage. - Ne
+jamais faire confiance au nom de fichier fourni.
+
+7.4 CSRF, XSS et sécurité navigateur - Appliquer les protections CSRF
+adaptées au mécanisme d’authentification. - Éviter l’injection HTML. -
+Définir une Content Security Policy adaptée, sans casser les
+fonctionnalités. - Ajouter les en-têtes de sécurité pertinents. - Ne pas
+autoriser des origines CORS larges sans nécessité. - Éviter les données
+sensibles dans localStorage. - Ne pas exposer les détails internes des
+erreurs aux utilisateurs.
+
+7.5 Secrets - Fichier .env.local ignoré par Git. - Fournir uniquement
+.env.example avec noms et descriptions, sans vraies valeurs. - Secrets
+de production dans les variables d’environnement Vercel ou le
+gestionnaire approprié. - Séparer développement, preview et
+production. - Ne jamais envoyer une clé privée dans le navigateur. - En
+cas de fuite : révoquer et renouveler immédiatement la clé, examiner les
+journaux et l’historique Git.
+
+7.6 Paiements - Ne jamais stocker les numéros de carte ni CVV. -
+Utiliser une page hébergée/tokenisation du prestataire lorsque
+possible. - Vérifier les signatures de webhooks côté serveur. - Vérifier
+montant, devise, référence de commande et état auprès du fournisseur. -
+Traiter les webhooks de manière idempotente. - Gérer les événements en
+double et dans le désordre. - Ne jamais considérer le retour navigateur
+comme preuve de paiement. - Utiliser le mode sandbox/test. - Ne
+déclencher aucun paiement réel sans validation humaine et configuration
+du compte marchand.
+
+7.7 Protection contre les abus - Rate limiting sur connexion,
+inscription, recherche, checkout, coupons et endpoints sensibles. -
+Limites de pagination et de taille de corps. - Protection contre
+l’énumération de comptes. - Contrôles anti-spam pour formulaires
+publics. - Journalisation des événements de sécurité. - Alertes sur
+erreurs répétées et activité anormale. - Captcha uniquement si le niveau
+de risque le justifie, avec solution accessible.
+
+7.8 Base de données - Connexion chiffrée. - Identifiants distincts pour
+développement et production. - Permissions minimales. - Sauvegardes et
+procédure de restauration vérifiées. - Migrations versionnées. - Pas de
+migration destructive automatique en production. - Transactions pour
+commandes, stock et événements de paiement. - Tests de concurrence pour
+le stock et les commandes.
+
+7.9 Dépendances et chaîne logicielle - Lockfile versionné. -
+Vérification régulière des vulnérabilités. - Mise à jour contrôlée des
+dépendances. - Pas de paquet abandonné ou douteux sans justification. -
+Analyse du dépôt et des secrets avant publication. - GitHub Dependabot
+ou mécanisme équivalent si disponible. - Ne jamais exécuter aveuglément
+un script téléchargé ou une commande inconnue.
+
+======================================================================
+8. PAIEMENTS, LIVRAISON ET CONTEXTE CLIENT
+======================================================================
+
+8.1 Paiements Créer une interface d’adaptation indépendante du
+fournisseur : - createPaymentSession() - verifyPayment() -
+handleWebhook() - refundPayment() si pris en charge - getPaymentStatus()
+
+L’interface ne doit pas supposer qu’un fournisseur est disponible dans
+tous les pays.
+
+Pour chaque nouveau client, choisir le fournisseur selon : - pays
+d’enregistrement du commerçant ; - pays des acheteurs ; - devise ; -
+moyens de paiement souhaités ; - disponibilité contractuelle ; - frais
+et délais de règlement ; - qualité de la documentation ; - gestion des
+remboursements ; - webhooks signés ; - environnement sandbox.
+
+Pour une boutique opérant en Côte d’Ivoire ou en Afrique de l’Ouest,
+étudier les prestataires et moyens réellement accessibles au commerçant,
+notamment cartes et solutions de paiement locales/mobile money selon
+disponibilité. Ne pas supposer qu’un prestataire international est
+disponible dans le pays. Le choix final doit être confirmé par le
+titulaire du compte marchand.
+
+8.2 Livraison Prévoir une interface de calcul : - zones desservies ; -
+tarif fixe, par zone, poids ou règle configurable ; - retrait sur place
+; - livraison gratuite au-delà d’un seuil ; - délai indicatif ; - suivi
+si un transporteur le permet.
+
+Ne pas promettre un délai ou un tarif non configuré. Le coût de
+livraison est calculé côté serveur et conservé dans la commande.
+
+8.3 Personnalisation par client Centraliser dans un fichier de
+configuration et/ou une table de paramètres : - nom de boutique ; - logo
+; - favicon ; - couleurs ; - typographie ; - coordonnées ; - devise ; -
+fuseau horaire ; - langues ; - pays desservis ; - modes de livraison ; -
+moyens de paiement ; - pages légales ; - réseaux sociaux ; - SEO ; -
+e-mail d’assistance.
+
+Les secrets restent dans l’environnement d’exécution et ne sont jamais
+inclus dans les paramètres publics.
+
+======================================================================
+9. PERFORMANCE, SEO ET FIABILITÉ
+======================================================================
+
+9.1 Performance - Images redimensionnées et optimisées. - Formats
+modernes lorsque pris en charge. - Chargement différé des images hors
+écran. - Pagination du catalogue. - Index SQL sur les colonnes de
+recherche et de relation utiles. - Éviter les requêtes N+1. - Cache
+seulement lorsque l’invalidation est maîtrisée. - Limiter le JavaScript
+client. - Utiliser les composants serveur lorsque pertinents. - Mesurer
+les performances au lieu de deviner. - Définir des objectifs Core Web
+Vitals réalistes et les contrôler.
+
+9.2 SEO - Métadonnées uniques par page. - URLs lisibles. - Canonical si
+nécessaire. - Sitemap XML. - robots.txt. - Open Graph. - Données
+structurées produit lorsque les informations sont fiables. - Pages de
+catégories indexables. - Pages privées et administration non
+indexables. - Gestion des produits archivés et redirections si
+nécessaire.
+
+9.3 Fiabilité - Gestion centralisée des erreurs. - Pages d’erreur
+utiles. - Journalisation structurée. - Identifiant de corrélation pour
+les opérations importantes. - Surveillance des erreurs. - Sauvegarde de
+base de données. - Procédure de restauration documentée et testée. -
+Vérification de santé pour les dépendances importantes si approprié. -
+Aucun message de succès si l’opération serveur a échoué.
+
+======================================================================
+10. ENVIRONNEMENTS ET OUTILS
+======================================================================
+
+10.1 À installer sur l’ordinateur - Visual Studio Code. - Git. - Node.js
+version LTS compatible avec la version du framework. - Gestionnaire de
+paquets choisi (npm, pnpm ou autre) ; choisir un seul et le
+documenter. - Navigateur moderne. - Extension officielle/fiable de
+l’agent IA utilisé dans VS Code. - Extensions facultatives : ESLint,
+Prettier, Prisma/ORM, Tailwind CSS IntelliSense, GitLens. - Terminal
+intégré à VS Code.
+
+L’agent doit vérifier les versions installées et expliquer les
+éventuelles installations nécessaires en termes simples. Il ne doit pas
+installer un logiciel système sans autorisation lorsque l’opération
+exige des droits administrateur.
+
+10.2 Comptes existants - GitHub : dépôt privé au démarrage recommandé. -
+Vercel : hébergement et déploiement. - Neon : PostgreSQL. Ces comptes
+sont déjà disponibles. L’agent doit vérifier les étapes de connexion et
+ne pas demander de partager des mots de passe dans le chat ou dans le
+dépôt.
+
+10.3 Comptes ou services susceptibles d’être nécessaires - Fournisseur
+de paiement compatible avec le pays du commerçant. - Fournisseur
+d’e-mails transactionnels. - Stockage d’images/fichiers. - Domaine
+personnalisé. - Outil de suivi d’erreurs. - Service anti-spam si
+nécessaire. Les comptes ne sont pas obligatoires pour développer le MVP
+localement. Des adaptateurs et modes simulés peuvent être utilisés
+pendant le développement.
+
+10.4 Environnements - Local : développement sur l’ordinateur. - Preview
+: branche ou pull request, données de test uniquement. - Production :
+boutique réelle, base dédiée, secrets réels, sauvegardes. Les bases et
+secrets de ces environnements doivent être séparés.
+
+10.5 Variables d’environnement indicatives DATABASE_URL= DIRECT_URL= (si
+l’ORM ou les migrations le nécessitent) AUTH_SECRET= APP_URL=
+EMAIL_FROM= EMAIL_PROVIDER_API_KEY= PAYMENT_PROVIDER=
+PAYMENT_SECRET_KEY= PAYMENT_WEBHOOK_SECRET= STORAGE_ENDPOINT=
+STORAGE_BUCKET= STORAGE_ACCESS_KEY_ID= STORAGE_SECRET_ACCESS_KEY=
+ERROR_TRACKING_DSN=
+
+Ne pas inventer de valeurs. Les noms définitifs doivent suivre les
+besoins des outils choisis. Ne jamais ajouter de vraies clés dans ce
+document, dans GitHub ou dans un prompt public.
+
+======================================================================
+11. PLAN DE RÉALISATION DE BOUT EN BOUT
+======================================================================
+
+L’agent doit travailler par phases. À la fin de chaque phase, il exécute
+les contrôles, corrige les erreurs et met à jour la documentation. Il ne
+doit pas commencer une nouvelle grande phase en laissant des erreurs
+bloquantes connues.
+
+PHASE 0 — Diagnostic et préparation 1. Examiner le dossier ouvert dans
+VS Code. 2. Vérifier s’il existe déjà un projet ou un dépôt. 3. Lire les
+fichiers existants avant de les modifier. 4. Détecter framework,
+versions, scripts et conventions. 5. Vérifier Git, Node.js et le
+gestionnaire de paquets. 6. Ne jamais écraser un projet existant sans
+sauvegarde. 7. Produire docs/PROJECT_AUDIT.md et
+docs/IMPLEMENTATION_PLAN.md. 8. Si le dépôt contient déjà du code,
+préserver ce qui fonctionne.
+
+Livrable : audit, risques, plan priorisé et liste des dépendances
+nécessaires.
+
+PHASE 1 — Initialisation 1. Créer ou assainir le projet
+Next.js/TypeScript. 2. Configurer le lint, le formatage et TypeScript
+strict. 3. Créer .gitignore et .env.example. 4. Vérifier que les secrets
+sont ignorés. 5. Configurer les scripts de développement, build, lint,
+typecheck et tests. 6. Créer README.md. 7. Initialiser Git si
+nécessaire. 8. Faire un premier commit propre si l’utilisateur a déjà
+autorisé le dépôt Git local.
+
+Livrable : application de base qui démarre et passe les contrôles.
+
+PHASE 2 — Design system et structure UI 1. Définir les tokens de
+couleur, typographie, rayons, ombres et espacements. 2. Construire les
+composants de base accessibles. 3. Construire navigation, en-tête, pied
+de page et layout responsive. 4. Construire les layouts boutique et
+administration. 5. Ajouter états de chargement, erreur, vide et succès.
+6. Vérifier mobile, tablette et desktop.
+
+Livrable : système visuel cohérent et pages structurelles.
+
+PHASE 3 — Base de données 1. Configurer Neon pour le développement. 2.
+Configurer l’ORM choisi. 3. Créer le schéma initial. 4. Ajouter
+contraintes, relations et index. 5. Créer des migrations versionnées. 6.
+Créer des données de démonstration non réelles. 7. Tester les lectures
+et écritures. 8. Documenter la sauvegarde et la restauration.
+
+Livrable : schéma validé, migrations et seed de démonstration.
+
+PHASE 4 — Authentification et rôles 1. Installer et configurer la
+solution retenue. 2. Créer inscription, connexion, déconnexion. 3. Créer
+récupération/réinitialisation de mot de passe. 4. Définir rôles et
+permissions. 5. Protéger pages, actions et endpoints. 6. Ajouter
+limitation des tentatives. 7. Tester accès autorisé et refusé. 8. Créer
+le premier administrateur par une procédure sécurisée, sans identifiant
+codé en dur.
+
+Livrable : authentification testée et administration protégée.
+
+PHASE 5 — Catalogue et recherche 1. Catégories. 2. Produits. 3. Images.
+4. Variantes. 5. Recherche, filtres et tri. 6. Pages produit et
+catégorie. 7. SEO de base. 8. Tests de validation et de permissions.
+
+Livrable : catalogue fonctionnel alimenté par la base.
+
+PHASE 6 — Panier, prix et stock 1. Créer le panier. 2.
+Ajouter/modifier/supprimer des articles. 3. Recalculer tous les montants
+côté serveur. 4. Gérer les variantes. 5. Vérifier le stock. 6. Gérer les
+cas de concurrence. 7. Tester les quantités invalides et les prix
+falsifiés.
+
+Livrable : panier robuste et calcul de prix fiable.
+
+PHASE 7 — Commande et paiement 1. Créer le checkout. 2. Valider les
+coordonnées et adresses. 3. Créer la commande avec snapshot des articles
+et prix. 4. Créer l’adaptateur de paiement. 5. Développer un mode simulé
+pour les tests. 6. Intégrer le fournisseur choisi en sandbox uniquement.
+7. Vérifier les webhooks. 8. Mettre en place l’idempotence. 9. Tester
+paiement réussi, refusé, annulé, retardé, doublé et webhook répété. 10.
+Ne jamais utiliser de paiement réel dans les tests automatisés.
+
+Livrable : parcours de commande complet en mode test.
+
+PHASE 8 — Livraison, e-mails et notifications 1. Calcul de livraison. 2.
+Retrait si activé. 3. E-mails de confirmation et mises à jour. 4.
+Templates d’e-mail responsives. 5. Journalisation des envois et gestion
+des échecs. 6. Aucun e-mail réel massif sans validation.
+
+Livrable : livraison et notifications configurables.
+
+PHASE 9 — Administration complète 1. Tableau de bord. 2. Gestion
+produits et catégories. 3. Gestion stocks. 4. Gestion commandes. 5.
+Gestion clients. 6. Promotions. 7. Pages et paramètres. 8. Audit des
+actions sensibles. 9. Tests de permissions.
+
+Livrable : back-office utilisable par un commerçant.
+
+PHASE 10 — Sécurité, qualité et accessibilité 1. Revue OWASP. 2. Tests
+d’autorisation. 3. Tests de validation. 4. Vérification des secrets. 5.
+Audit des dépendances. 6. Tests d’accessibilité automatisés et manuels.
+7. Tests responsive. 8. Vérification des en-têtes. 9. Vérification des
+webhooks et de l’idempotence. 10. Revue des journaux pour éviter les
+fuites de données.
+
+Livrable : rapport de sécurité et liste des risques résiduels.
+
+PHASE 11 — Tests complets - Tests unitaires du calcul de prix,
+promotions, stock et transitions de commande. - Tests d’intégration des
+services et de la base. - Tests end-to-end du parcours visiteur. - Tests
+end-to-end de l’administration. - Tests des accès interdits. - Tests des
+erreurs et états limites. - Tests sur plusieurs tailles d’écran. - Build
+de production. - Aucun test critique ne doit être simplement ignoré pour
+obtenir un résultat vert.
+
+Livrable : rapport de tests avec résultats réels.
+
+PHASE 12 — Déploiement Preview 1. Connecter le dépôt GitHub à Vercel. 2.
+Configurer les variables d’environnement Preview. 3. Configurer une base
+Neon de test/preview distincte de la production. 4. Exécuter les
+migrations selon procédure sûre. 5. Déployer la preview. 6. Tester les
+parcours sur l’URL Preview. 7. Corriger les erreurs. 8. Ne pas basculer
+sur production tant que les critères ne sont pas satisfaits.
+
+Livrable : preview validée.
+
+PHASE 13 — Préparation production 1. Créer/configurer la base de
+production dédiée. 2. Vérifier sauvegardes et restauration. 3.
+Configurer secrets de production. 4. Configurer domaine et DNS avec
+validation du propriétaire. 5. Configurer paiements réels uniquement
+après validation du commerçant. 6. Vérifier pages légales et
+coordonnées. 7. Vérifier taxes, livraison, devise et politique de
+remboursement. 8. Préparer procédure de retour arrière. 9. Vérifier les
+accès administrateurs et MFA. 10. Faire une checklist de mise en ligne.
+
+Livrable : dossier de mise en production, prêt à validation humaine.
+
+PHASE 14 — Mise en ligne et suivi Le déploiement production et les
+opérations irréversibles nécessitent validation humaine explicite. Après
+validation : 1. Déployer. 2. Exécuter les contrôles de santé. 3. Tester
+une commande contrôlée selon le mode du prestataire. 4. Vérifier les
+webhooks. 5. Surveiller erreurs, logs et performances. 6. Vérifier
+sauvegardes. 7. Documenter les procédures d’exploitation.
+
+Livrable : application en production et guide d’exploitation.
+
+======================================================================
+12. STRATÉGIE DE TEST ET CRITÈRES D’ACCEPTATION
+======================================================================
+
+12.1 Critères fonctionnels - Un visiteur consulte le catalogue. - Les
+filtres et recherches fonctionnent. - Une fiche produit affiche les
+bonnes informations. - Le panier conserve les articles selon le
+comportement prévu. - Les montants sont recalculés côté serveur. - Une
+commande de test est créée correctement. - Les commandes ne peuvent pas
+être consultées par un autre client. - Un administrateur peut gérer les
+produits et commandes. - Les promotions respectent leurs règles. - Le
+stock ne devient pas négatif en cas de requêtes concurrentes. - Les
+webhooks répétés ne créent pas de doubles paiements/commandes. - Les
+e-mails sont envoyés seulement lorsque le fournisseur est configuré.
+
+12.2 Critères techniques - Build de production réussi. - TypeScript sans
+erreur. - Lint sans erreur bloquante. - Tests critiques réussis. -
+Migrations reproductibles. - Pas de secret détecté dans le dépôt. - Pas
+de dépendance vulnérable critique non traitée. - Pas d’erreur serveur
+critique dans les parcours essentiels. - Pages essentielles accessibles
+au clavier. - Interface utilisable sur mobile.
+
+12.3 Définition de « terminé » Le projet ne peut être déclaré « prêt
+pour production » que si : - tous les critères bloquants sont validés
+; - les tests ont réellement été exécutés ; - les résultats et limites
+sont documentés ; - la configuration de production est vérifiée ; - les
+secrets sont correctement configurés ; - les textes légaux, paiements,
+livraison et règles commerciales ont été validés par le client ; - les
+sauvegardes et le retour arrière sont documentés ; - les points
+nécessitant une décision humaine sont clairement listés.
+
+L’agent ne doit jamais écrire « 100 % sécurisé » ou « 100 % terminé »
+sans réserve. Il doit distinguer : code terminé, tests passés,
+configuration externe en attente, validation métier en attente et
+production effectivement publiée.
+
+======================================================================
+13. GESTION DES ERREURS ET MÉTHODE DE TRAVAIL DE L’AGENT IA
+======================================================================
+
+L’agent doit appliquer le cycle suivant : 1. Comprendre la demande et le
+contexte. 2. Inspecter les fichiers concernés. 3. Établir un plan court.
+4. Modifier un ensemble cohérent de fichiers. 5. Exécuter les contrôles
+adaptés. 6. Lire les messages d’erreur complets. 7. Corriger la cause,
+pas masquer le symptôme. 8. Relancer les tests. 9. Mettre à jour la
+documentation. 10. Résumer ce qui a été fait, ce qui est vérifié et ce
+qui reste.
+
+Règles : - Ne pas réécrire toute l’application à chaque demande. - Ne
+pas supprimer un fichier sans vérifier ses usages. - Ne pas remplacer
+une architecture fonctionnelle sans raison documentée. - Ne pas laisser
+de TODO critique, de faux boutons ou de liens morts. - Ne pas créer de
+données ou d’intégrations fictives en production. - Ne pas désactiver
+TypeScript, lint ou tests pour cacher les erreurs. - Ne pas ignorer les
+erreurs de build. - Ne pas affirmer qu’une commande a réussi sans
+l’avoir exécutée. - Utiliser des commits petits et descriptifs. -
+Conserver un journal des décisions. - En cas d’incertitude métier,
+utiliser un comportement sûr et configurable, puis inscrire la décision
+à valider. - Si une action est destructive ou externe, demander
+confirmation avant exécution. - Ne jamais demander à l’utilisateur de
+coller des mots de passe, secrets ou clés privées dans le chat.
+
+======================================================================
+14. DOCUMENTATION À PRODUIRE DANS LE PROJET
+======================================================================
+
+L’agent doit maintenir au minimum : - README.md : présentation et
+démarrage rapide. - docs/PROJECT_AUDIT.md : état initial du dépôt. -
+docs/IMPLEMENTATION_PLAN.md : phases et avancement. -
+docs/ARCHITECTURE.md : architecture technique. - docs/DATABASE.md :
+modèle et migrations. - docs/SECURITY.md : mesures de sécurité et
+risques résiduels. - docs/TESTING.md : exécution des tests. -
+docs/DEPLOYMENT.md : déploiement Vercel. - docs/ENVIRONMENT_VARIABLES.md
+: description de chaque variable. - docs/CLIENT_SETUP.md : personnaliser
+le template pour un nouveau client. - docs/OPERATIONS.md : sauvegardes,
+restauration, incidents et maintenance. - docs/decisions/ : décisions
+d’architecture. - .env.example : noms des variables uniquement, sans
+secrets.
+
+Chaque document doit correspondre au code réel. Ne pas laisser une
+documentation obsolète.
+
+======================================================================
+15. PROCÉDURE POUR CRÉER UNE BOUTIQUE POUR UN NOUVEAU CLIENT
+======================================================================
+
+Objectif : transformer le socle en boutique personnalisée sans modifier
+le cœur métier à chaque fois.
+
+1.  Créer un nouveau dépôt à partir du template.
+2.  Créer une nouvelle base Neon dédiée.
+3.  Créer un nouveau projet Vercel lié au dépôt.
+4.  Configurer les variables d’environnement de développement, preview
+    et production.
+5.  Définir le nom, logo, couleurs, typographie et favicon.
+6.  Définir pays, devise, fuseau horaire et langues.
+7.  Ajouter catégories, produits, variantes, images et stocks.
+8.  Configurer livraison, retrait et retours.
+9.  Choisir le prestataire de paiement disponible pour le commerçant.
+10. Configurer les e-mails transactionnels.
+11. Ajouter les pages légales validées.
+12. Créer les administrateurs selon la procédure sécurisée.
+13. Tester les parcours complets en sandbox.
+14. Vérifier la sécurité et les performances.
+15. Faire valider le contenu et les règles métier par le client.
+16. Déployer en production après autorisation.
+
+Ne jamais réutiliser la base, les secrets, les utilisateurs ou les
+données d’un autre client. Le template doit fournir une séparation nette
+entre le code commun et les paramètres propres à chaque boutique.
+
+======================================================================
+16. PROMPT MAÎTRE À COLLER DANS L’AGENT IA DE VS CODE
+======================================================================
+
+Tu es un ingénieur logiciel senior full-stack, architecte applicatif,
+spécialiste UX/UI, expert PostgreSQL, spécialiste sécurité applicative
+et responsable qualité. Tu travailles dans le dépôt actuellement ouvert
+dans VS Code.
+
+CONTEXTE DU PROPRIÉTAIRE Le propriétaire du projet est débutant en
+développement. Il utilise le vibe coding et ne doit pas être obligé de
+comprendre chaque détail technique pour que tu avances. Tu dois
+expliquer simplement les actions qui exigent son intervention. Tu
+disposes déjà des comptes GitHub, Vercel et Neon, mais tu ne dois jamais
+supposer que les comptes sont connectés ou configurés.
+
+MISSION Construire un template e-commerce full-stack professionnel,
+réutilisable pour différents clients, selon le dossier de spécifications
+fourni. L’interface doit être futuriste, premium, moderne, intuitive,
+joyeuse et sombre. Le produit doit être responsive, accessible,
+performant, maintenable et conçu avec une sécurité sérieuse.
+
+RÈGLE D’AUTONOMIE Travaille de manière proactive et autonome pour toutes
+les opérations locales, réversibles et sans risque : analyse,
+planification, création et modification de code, installation de
+dépendances raisonnables, exécution de tests, correction d’erreurs,
+documentation et préparation de déploiement.
+
+Ne demande pas une permission à chaque petite étape. Prends les
+décisions techniques raisonnables, choisis une solution cohérente,
+documente ton choix et avance.
+
+En revanche, arrête-toi et demande une validation humaine avant : -
+toute suppression irréversible ou migration destructive ; - toute action
+qui peut détruire ou exposer des données ; - toute utilisation de
+paiement réel, dépense ou abonnement ; - toute publication en production
+ou modification de DNS/domaine ; - toute action sur un compte externe
+qui engage le propriétaire ; - toute utilisation de secrets réels si
+leur configuration nécessite l’intervention du propriétaire ; - toute
+décision métier ou légale que tu ne peux pas déduire de façon sûre.
+
+Ne demande jamais de mots de passe, clés privées ou codes de sécurité
+dans le chat. Guide le propriétaire vers les champs de configuration
+sécurisés de l’outil concerné.
+
+MÉTHODE OBLIGATOIRE 1. Commence par inspecter intégralement le projet
+existant. Ne remplace rien avant d’avoir compris ce qui existe. 2.
+Produis un audit et un plan de réalisation par phases. 3. Identifie les
+points bloquants, les risques et les décisions à prendre. 4. Construis
+le projet progressivement, en privilégiant un socle fonctionnel plutôt
+qu’une énorme génération de code non vérifiée. 5. Après chaque phase,
+exécute lint, typecheck, tests et build lorsque pertinents. 6. Corrige
+toutes les erreurs que tu peux résoudre sans intervention humaine. 7. Ne
+masque jamais une erreur en désactivant un contrôle. 8. Mets à jour les
+documents et la checklist d’avancement. 9. N’affirme jamais avoir
+exécuté un test ou une commande si ce n’est pas le cas. 10. Si une
+intégration externe n’est pas encore configurée, crée un adaptateur et
+un mode sandbox/mock clairement séparé, puis documente les étapes
+manquantes.
+
+EXIGENCES TECHNIQUES - Utilise TypeScript strict. - Utilise Next.js App
+Router et React, sauf incompatibilité justifiée avec le dépôt
+existant. - Utilise Tailwind CSS et des composants accessibles. -
+Utilise PostgreSQL sur Neon. - Choisis un ORM unique, maintenu et
+compatible. - Choisis une solution d’authentification éprouvée et
+maintenue ; ne code pas un système maison sans raison exceptionnelle. -
+Utilise Zod ou une validation équivalente côté serveur. - Utilise des
+transactions pour les opérations de commande, stock et paiement. -
+Utilise des montants exacts, jamais des calculs monétaires en flottants
+ordinaires. - Sépare les environnements local, preview et production. -
+Utilise Git et un lockfile. - Prépare le déploiement Vercel. - Les
+images téléversées doivent être conservées dans un stockage durable
+externe, pas dans un disque éphémère. - Les paiements doivent être
+intégrés par adaptateurs et testés en sandbox.
+
+EXIGENCES MÉTIER Construis les fonctionnalités détaillées dans ce cahier
+de charge : accueil, catalogue, catégories, recherche, filtres, fiches
+produits, variantes, panier, checkout, comptes clients, commandes,
+paiements, livraison, promotions, administration, gestion des stocks,
+contenus, paramètres et pages de confiance.
+
+Les parcours essentiels doivent fonctionner de bout en bout. Aucun
+bouton important ne doit être décoratif. Aucun faux succès ne doit être
+affiché.
+
+EXIGENCES DE SÉCURITÉ - Vérifie côté serveur l’identité, le rôle et les
+droits d’accès. - Protège contre les accès aux données d’autres
+utilisateurs. - Valide toutes les entrées côté serveur. - Protège les
+sessions et les cookies. - Limite les tentatives sur les endpoints
+sensibles. - Vérifie les signatures de webhooks. - Rends les webhooks
+idempotents. - Ne stocke jamais les données de carte. - Ne fais jamais
+confiance au prix, au stock ou au statut de paiement envoyés par le
+navigateur. - Ne place aucun secret dans le code client ou Git. - Ajoute
+les en-têtes de sécurité adaptés. - Journalise les actions sensibles
+sans enregistrer de secrets ou de données excessives. - Audite les
+dépendances. - Documente les risques résiduels. - N’annonce jamais une
+sécurité absolue.
+
+EXIGENCES UX/UI Construis un design system cohérent avec fond sombre,
+couleurs d’accent lumineuses et joyeuses, typographie lisible,
+composants élégants, animations discrètes, responsive mobile-first,
+états de chargement/erreur/vide/succès et accessibilité clavier. Évite
+les interfaces génériques, les effets décoratifs excessifs et les
+contrastes insuffisants.
+
+EXIGENCES DE QUALITÉ - Tests unitaires des règles métier. - Tests
+d’intégration des opérations de base de données. - Tests end-to-end des
+parcours critiques. - Tests d’autorisation. - Tests du panier, du stock,
+des promotions et des webhooks. - Build de production. - Typecheck et
+lint. - Vérification des secrets et dépendances. - Vérifications
+responsive et accessibilité. - Rapport des tests réellement exécutés.
+
+GESTION DES DÉCISIONS Quand plusieurs solutions sont possibles, choisis
+celle qui est la plus simple, maintenue, sûre, documentée et adaptée à
+une boutique e-commerce réutilisable. Consigne les choix importants dans
+docs/decisions/. Évite les dépendances superflues.
+
+GESTION DES BLOCAGES Ne t’arrête pas pour demander une précision si tu
+peux avancer de façon sûre avec une valeur par défaut configurable.
+Inscris alors cette hypothèse dans docs/OPEN_QUESTIONS.md. Si le choix
+touche aux paiements réels, à la loi, à la fiscalité, à la livraison
+contractuelle, aux données réelles ou à une action irréversible, demande
+une validation claire.
+
+LIVRABLES - Application complète et cohérente. - Interface boutique. -
+Espace d’administration. - Schéma de base de données et migrations. -
+Authentification et autorisations. - Tests. - Documentation technique et
+opérationnelle. - Guide de personnalisation par client. - .env.example
+sans secrets. - Guide de déploiement Vercel/Neon. - Rapport de sécurité
+et limites connues. - Checklist de mise en production. - Liste claire
+des interventions humaines encore nécessaires.
+
+DÉFINITION DE FIN Ne déclare pas le projet terminé simplement parce que
+les pages s’affichent. Il est prêt pour validation de production lorsque
+les parcours critiques fonctionnent, les tests sont passés, le build est
+réussi, les risques sont documentés, les environnements sont séparés, et
+les intégrations externes sont configurées ou explicitement identifiées
+comme restant à faire.
+
+Commence maintenant par l’audit du dépôt et la création du plan.
+N’essaie pas de générer toute l’application en une seule réponse. Avance
+par phases, vérifie ton travail et continue sans attendre de validation
+pour les opérations ordinaires.
+
+======================================================================
+17. PROMPT DE REPRISE APRÈS UNE INTERRUPTION
+======================================================================
+
+Reprends le projet à partir de son état réel dans le dépôt. Lis d’abord
+README.md, docs/IMPLEMENTATION_PLAN.md, docs/PROJECT_AUDIT.md,
+docs/OPEN_QUESTIONS.md s’ils existent, ainsi que les derniers
+changements Git.
+
+Ne suppose pas que le résumé de la conversation reflète l’état actuel du
+code. Inspecte les fichiers et exécute les contrôles nécessaires.
+
+Identifie : 1. la dernière phase réellement terminée ; 2. les
+fonctionnalités opérationnelles ; 3. les tests réellement passés ; 4.
+les erreurs restantes ; 5. les décisions humaines en attente ; 6. la
+prochaine tâche sûre et prioritaire.
+
+Puis continue automatiquement les tâches locales et réversibles. Ne
+répète pas inutilement le travail déjà validé. Ne réalise aucune action
+destructive ou externe sans autorisation.
+
+======================================================================
+18. PROMPT DE REVUE FINALE
+======================================================================
+
+Agis comme un auditeur indépendant qui n’a pas écrit le code. Effectue
+une revue approfondie du dépôt.
+
+Vérifie : - les parcours visiteur et client ; - les parcours
+d’administration ; - l’authentification et les permissions ; - les accès
+directs aux données ; - la validation des entrées ; - les prix, remises,
+taxes et frais ; - le stock et les accès concurrents ; - les transitions
+de commande ; - les paiements et webhooks ; - l’idempotence ; - les
+secrets ; - les fichiers téléversés ; - les journaux ; - les erreurs ; -
+les migrations et sauvegardes ; - les performances ; - l’accessibilité
+; - le SEO ; - les dépendances ; - la documentation ; - la configuration
+Vercel et Neon.
+
+Pour chaque problème, indique la gravité (critique, élevée, moyenne,
+faible), le fichier ou composant concerné, le scénario d’exploitation ou
+d’échec, la correction recommandée et le test de non-régression.
+
+Corrige automatiquement les problèmes sûrs et réversibles. Demande
+validation pour les opérations destructives ou externes. Exécute à
+nouveau les tests après correction. Termine par un rapport honnête :
+réussi, échoué, non testé, en attente d’un compte externe, ou en attente
+de validation humaine.
+
+======================================================================
+19. CHECKLIST DE DÉMARRAGE POUR LE PROPRIÉTAIRE
+======================================================================
+
+À faire une seule fois au début : [ ] Installer/mettre à jour VS Code. [
+] Installer Git. [ ] Installer Node.js LTS. [ ] Ouvrir le dossier du
+projet dans VS Code. [ ] Vérifier que l’agent IA est installé et
+autorisé à travailler dans le dossier. [ ] Créer un dépôt GitHub privé
+ou choisir le dépôt existant. [ ] Garder les identifiants GitHub, Vercel
+et Neon privés. [ ] Ne pas coller de clés secrètes dans le prompt
+maître. [ ] Ajouter ce dossier de spécifications au projet, par exemple
+dans docs/PROJECT_SPECIFICATION.txt. [ ] Coller le prompt maître dans
+l’agent IA. [ ] Laisser l’agent réaliser l’audit et le plan. [ ] Lire
+les points nécessitant une décision humaine avant toute production.
+
+À faire avant la première boutique réelle : [ ] Nom, logo et identité du
+client validés. [ ] Catalogue et images réels fournis. [ ] Prix, devise
+et règles de stock confirmés. [ ] Zones et tarifs de livraison
+confirmés. [ ] Prestataire de paiement confirmé et compte marchand
+activé. [ ] Fournisseur e-mail configuré. [ ] Pages juridiques validées.
+[ ] Domaine et DNS validés. [ ] Administrateurs créés de manière
+sécurisée. [ ] Sauvegardes et restauration vérifiées. [ ] Tests de
+commande effectués en sandbox. [ ] Validation écrite du client avant
+mise en ligne.
+
+======================================================================
+20. CONSEIL FINAL : COMMENT UTILISER CE DOSSIER
+======================================================================
+
+1.  Enregistre ce document dans le dossier du projet sous le nom :
+    docs/PROJECT_SPECIFICATION.txt
+
+2.  Ouvre le dossier racine du projet dans VS Code.
+
+3.  Donne le prompt maître de la section 16 à l’agent IA. Tu peux lui
+    demander de lire le document complet avant de commencer.
+
+4.  Laisse-le d’abord analyser ton ordinateur et ton projet. Ne lui
+    demande pas de créer immédiatement des centaines de fichiers.
+
+5.  Vérifie les livrables de chaque phase. Même si l’IA travaille de
+    façon autonome, conserve le contrôle sur les comptes, les secrets,
+    les paiements réels, les données clients et la mise en production.
+
+6.  Commence par un MVP solide : catalogue, panier, commande, paiement
+    sandbox, compte client et administration. Ajoute ensuite les
+    fonctions avancées.
+
+Le bon objectif n’est pas « beaucoup de fonctionnalités le plus vite
+possible ». Le bon objectif est une boutique qui fonctionne réellement,
+dont les montants et les stocks sont fiables, dont les accès sont
+protégés et que tu peux réutiliser proprement pour chaque client.
+
+FIN DU DOSSIER
