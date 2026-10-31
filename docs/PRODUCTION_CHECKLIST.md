@@ -10,4 +10,3 @@
 - [ ] Vérification mobile, clavier, contraste et liens WhatsApp effectuée.
 - [ ] Mentions légales et textes commerciaux validés par le propriétaire.
 - [ ] Validation humaine explicite avant domaine, DNS et publication Production.
-

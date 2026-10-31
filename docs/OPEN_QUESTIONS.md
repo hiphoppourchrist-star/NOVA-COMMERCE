@@ -25,4 +25,3 @@ Le développement local peut continuer sans bloquer sur ces sujets. Les valeurs 
 ## Intervention du propriétaire
 
 Le propriétaire doit saisir les secrets uniquement dans les variables sécurisées de l'environnement concerné. Il ne doit jamais les envoyer dans le chat ni les committer. La configuration Vercel, le domaine/DNS et la publication Production nécessitent une validation explicite.
-

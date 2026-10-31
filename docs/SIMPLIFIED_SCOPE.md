@@ -24,4 +24,3 @@ Il n'existe volontairement pas de panier, checkout, paiement, livraison, compte 
 - Configurer les variables Vercel et le domaine de Nova Commerce.
 
 Les tables historiques de commandes et promotions ne sont pas supprimées de Neon : une suppression de colonnes ou de tables serait destructive. Elles ne sont plus importées par les routes publiques et seront traitées séparément après validation explicite.
-

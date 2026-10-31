@@ -55,4 +55,3 @@ Nova Commerce est une application e-commerce unique. Les visiteurs consultent le
 ## Règle de migration
 
 Les anciennes tables de commande et de promotion sont conservées dans la base pour éviter une suppression destructive. Elles ne sont plus utilisées par l'application. Leur suppression nécessitera une validation explicite et une migration dédiée.
-

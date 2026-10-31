@@ -10,4 +10,3 @@
 8. Configurer le domaine et le DNS uniquement après validation humaine.
 
 Cette application ne possède volontairement aucun paiement, service de livraison, panier ou compte client.
-

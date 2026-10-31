@@ -39,4 +39,3 @@ npm audit
 ```
 
 Ne jamais ajouter de secret dans Git ou dans le chat. Voir le [guide de déploiement](./docs/DEPLOYMENT.md), le [rapport de sécurité](./docs/SECURITY.md) et la [checklist de production](./docs/PRODUCTION_CHECKLIST.md).
-

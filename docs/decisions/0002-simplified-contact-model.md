@@ -18,4 +18,3 @@ Seul l'administrateur dispose d'un compte Neon Auth. L'accès d'administration e
 - Les anciennes tables de commande/promotions ne sont pas supprimées pour préserver la base existante.
 - Le numéro WhatsApp est une configuration d'environnement publique et doit être validé avant publication.
 - Les boutons du catalogue ont un effet réel : navigation ou ouverture de WhatsApp ; aucun succès de commande n'est affiché.
-

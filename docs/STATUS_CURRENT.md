@@ -27,4 +27,3 @@ Les anciennes tables de commandes/promotions déjà présentes dans Neon sont co
 - renseigner son adresse dans `ADMIN_EMAILS` ;
 - renseigner le numéro WhatsApp dans `NEXT_PUBLIC_WHATSAPP_NUMBER` ;
 - configurer les variables Preview/Production dans Vercel.
-
