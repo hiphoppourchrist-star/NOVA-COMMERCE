@@ -1,98 +1,57 @@
-# Plan d’implémentation
+# Plan de réalisation du template simplifié
 
-Statut global : **phase 1 — socle technique initial validé ; design system à poursuivre**.
+Le produit est un catalogue administrable. Les visiteurs consultent les produits et contactent l'administrateur sur WhatsApp. Il n'y a ni compte client, ni panier, ni commande, ni paiement, ni livraison.
 
-## Principes de réalisation
+## Phases réalisées
 
-- Livrer un parcours vertical vérifiable avant d’ajouter les fonctions secondaires.
-- Garder les règles de prix, stock, commande et autorisation côté serveur.
-- Utiliser des adaptateurs explicites pour le paiement, l’e-mail et le stockage.
-- Ne jamais utiliser de données ou de succès fictifs en dehors d’un mode de développement clairement identifié.
-- Exécuter les contrôles pertinents après chaque phase : lint, typecheck, tests et build.
+### Phase 0 — Audit et cadrage
 
-## Phases
+- [x] Inspecter le dépôt, l'historique Git et la configuration Neon.
+- [x] Choisir l'architecture « une boutique = un projet Vercel = une base Neon ».
+- [x] Documenter les limites et les interventions humaines restantes.
 
-### Phase 0 — Audit et cadrage — terminée
+### Phase 1 — Socle technique
 
-- [x] Inspecter le contenu et l’historique Git.
-- [x] Vérifier les outils locaux disponibles.
-- [x] Confirmer l’absence de code et de configuration existants.
-- [x] Identifier les risques et les décisions humaines.
-- [x] Écrire l’audit et le plan.
+- [x] Next.js App Router, React, TypeScript strict et Tailwind CSS.
+- [x] Design sombre, responsive, accessible et personnalisable.
+- [x] Variables d'environnement documentées et secrets exclus de Git.
+- [x] Préparation Vercel/Neon et stockage durable pour les images.
 
-### Phase 1 — Socle technique et design system — en cours
+### Phase 2 — Catalogue PostgreSQL
 
-- [x] Initialiser Next.js App Router avec TypeScript strict.
-- [x] Installer Tailwind CSS et l’outillage qualité minimal.
-- [x] Ajouter le lockfile et les scripts de lint, typecheck et build.
-- [ ] Définir l’architecture `app`, `components`, `lib`, `domain`, `infrastructure` et `tests`.
-- [ ] Créer le thème sombre personnalisable, les layouts, la navigation et les états loading/error/not-found.
-- [ ] Ajouter `.env.example` et les règles Git d’exclusion des secrets.
-- [x] Vérifier lint, typecheck et build.
+- [x] Modèle catégories, produits, variantes et stock d'affichage.
+- [x] Migrations Drizzle appliquées sur la branche Neon de développement.
+- [x] Catalogue public par catégorie, recherche et filtres de prix.
+- [x] Fiche produit avec prix et état de disponibilité.
 
-Résultats vérifiés le 31 octobre 2026 : `npm run lint`, `npm run typecheck` et `npm run build` réussissent dans le socle initial. Aucun parcours métier n’est encore implémenté.
+### Phase 3 — Contact WhatsApp
 
-### Phase 2 — Base de données et domaine catalogue — en cours
+- [x] Génération serveur d'un lien WhatsApp avec message prérempli.
+- [x] Message encodé avec le produit consulté.
+- [x] État explicite lorsque le numéro WhatsApp n'est pas configuré.
 
-- [x] Choisir et documenter Drizzle ORM avec le driver Neon HTTP pour Next.js.
-- [x] Modéliser produits, variantes, catégories, prix et stock.
-- [x] Générer une première migration locale non destructive.
-- [x] Appliquer la migration initiale sur la branche Neon `production`.
-- [x] Ajouter la première page catalogue connectée à PostgreSQL avec état vide explicite.
-- [x] Ajouter une fiche produit par slug et un seed de développement protégé.
-- [ ] Ajouter médias, seed de développement explicitement identifié et contraintes métier complémentaires.
-- [ ] Implémenter catalogue, catégories, recherche, filtres, tri, fiche produit et SEO de base.
-- [ ] Ajouter tests unitaires des règles de prix, variantes et disponibilité.
+### Phase 4 — Administration
 
-### Phase 3 — Panier et commande sans paiement réel
+- [x] Connexion Neon Auth réservée à l'administrateur.
+- [x] Autorisation serveur par liste `ADMIN_EMAILS`.
+- [x] Création, modification, archivage et consultation des produits.
+- [x] Upload d'images vers Neon Object Storage avec URL présignée.
 
-- [ ] Implémenter panier persistant et recalcul serveur des montants.
-- [ ] Implémenter validation serveur des coordonnées, livraison et consentements.
-- [ ] Ajouter promotions déterministes et règles de cumul documentées.
-- [ ] Créer commande, lignes immuables, stock atomique et idempotence des soumissions.
-- [ ] Ajouter tests d’intégration base de données, concurrence de stock et autorisation.
+### Phase 5 — Qualité et sécurité
 
-### Phase 4 — Authentification et comptes
+- [x] Validation Zod des mutations d'administration.
+- [x] En-têtes de sécurité et séparation des secrets serveur/client.
+- [x] Vérifications lint, typecheck, tests, build et routes HTTP critiques.
+- [x] Documentation de déploiement, sécurité et checklist de production.
 
-- [ ] Sélectionner une solution d’authentification maintenue après vérification de compatibilité.
-- [ ] Implémenter inscription, connexion, déconnexion, réinitialisation et protection contre l’énumération.
-- [ ] Ajouter profils, adresses et historique de commandes avec contrôle de propriété.
-- [ ] Ajouter rôles administrateur et propriétaire, contrôlés côté serveur.
-- [ ] Tester les accès autorisés et interdits.
+## Suite contrôlée
 
-### Phase 5 — Paiement sandbox, livraison et notifications
+- [ ] Le propriétaire configure le numéro WhatsApp public dans Vercel.
+- [ ] Le propriétaire crée/configure le compte Neon Auth administrateur.
+- [ ] Le propriétaire renseigne `ADMIN_EMAILS` et les secrets de chaque environnement.
+- [ ] Le propriétaire valide les contenus commerciaux et juridiques.
+- [ ] La publication production et le domaine restent soumis à validation humaine.
 
-- [ ] Définir les interfaces `PaymentProvider`, `ShippingProvider`, `EmailProvider` et leurs erreurs.
-- [ ] Ajouter un adaptateur sandbox/mock impossible à confondre avec la production.
-- [ ] Ajouter création de session de paiement, retour vérifié et webhook signé/idempotent.
-- [ ] Ne jamais stocker les données de carte ni accepter le statut envoyé par le navigateur.
-- [ ] Ajouter livraison, retrait et notifications lorsque leur configuration existe.
+## Règle de migration
 
-### Phase 6 — Administration
-
-- [ ] Dashboard fondé uniquement sur les données réelles.
-- [ ] Gestion des produits, catégories, médias, stocks, commandes, clients et promotions.
-- [ ] Gestion des contenus et paramètres non secrets.
-- [ ] Journal d’audit des actions sensibles sans secrets ni données excessives.
-- [ ] Tests d’autorisation sur chaque mutation administrative.
-
-### Phase 7 — Qualité, sécurité et préparation du déploiement
-
-- [ ] Tests Playwright des parcours critiques mobile et desktop.
-- [ ] Vérification accessibilité clavier et audit automatisé.
-- [ ] En-têtes de sécurité, rate limiting adapté et contrôle des uploads.
-- [ ] Audit des dépendances et recherche de secrets.
-- [ ] Documentation Vercel/Neon, sauvegardes, restauration et séparation des environnements.
-- [ ] Build de production et rapport honnête des contrôles exécutés.
-
-### Phase 8 — Validation humaine avant production
-
-- [ ] Choix du pays, devise, fiscalité et politique de livraison.
-- [ ] Validation des textes juridiques et contenus commerciaux.
-- [ ] Configuration sécurisée des comptes Neon, Vercel, paiement, e-mail et stockage.
-- [ ] Tests sandbox avec les comptes du propriétaire.
-- [ ] Validation explicite avant domaine, DNS et publication production.
-
-## Critère de sortie
-
-Une phase est considérée terminée seulement si son code est présent, les contrôles annoncés ont réellement été exécutés, les limites sont documentées et aucun bouton critique ne simule un succès.
+Les anciennes tables de commande et de promotion sont conservées dans la base pour éviter une suppression destructive. Elles ne sont plus utilisées par l'application simplifiée. Leur suppression nécessitera une validation explicite et une migration dédiée.

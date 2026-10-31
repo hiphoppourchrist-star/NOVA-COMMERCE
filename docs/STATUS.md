@@ -1,27 +1,25 @@
-# État réel de réalisation — 31 octobre 2026
+# État réel de réalisation
 
-## Fonctionnel présent
+## Fonctionnel
 
-- Next.js App Router, TypeScript strict, Tailwind CSS, design responsive.
-- PostgreSQL Neon avec Drizzle, migrations et schéma catégories / produits / variantes / commandes / lignes / mouvements de stock.
-- Catalogue connecté, recherche et filtres de prix côté serveur.
-- Panier local, recalcul serveur, commande transactionnelle, stock atomique et idempotence.
-- Neon Auth avec inscription, connexion, session et espace compte.
-- Administration protégée par session et `ADMIN_EMAILS`, avec lecture des alertes de stock.
-- Adaptateur de paiement sandbox et adaptateur de stockage durable à configurer.
+- Catalogue public avec catégories, recherche, filtres de prix et fiches produits.
+- Prix affichés depuis PostgreSQL, sans calcul monétaire flottant.
+- Contact WhatsApp par produit avec message prérempli et état non configuré explicite.
+- Administration protégée par Neon Auth et `ADMIN_EMAILS`.
+- CRUD produit côté serveur avec validation Zod et archivage non destructif.
+- Upload d'images préparé pour Neon Object Storage.
+- Aucun compte client, panier, commande, paiement ou livraison dans le périmètre actif.
 
 ## Contrôles réellement exécutés
 
 - `npm run lint` : réussi.
 - `npm run typecheck` : réussi.
-- `npm run test` : réussi, 3 tests sur 3.
+- `npm run test` : réussi, 2 tests sur 2.
 - `npm run build` : réussi.
-- `npm run db:migrate` : réussi sur la branche Neon liée.
-- Application compilée démarrée sur `http://localhost:3000`.
-- Pages `/catalogue`, `/panier`, `/auth/sign-in` et `/admin` vérifiées en HTTP.
-- Checkout invalide vérifié : réponse `400` sans création de commande.
-- Neon Auth vérifié : `/api/auth/get-session` répond `200` avec session anonyme `null`.
+- Vérification HTTP locale : pages publiques en `200`, API d'administration anonyme en `403`.
+- Vérification HTTP des anciens parcours : `/panier`, `/compte`, `/auth/sign-in`, `/auth/sign-up` et `/api/checkout` en `404`.
+- Vérification Neon : connexion PostgreSQL et génération d'une URL présignée de stockage réalisées précédemment.
 
-## Pas encore production-ready
+## Limites restantes
 
-Le projet n’est pas déclaré terminé à 100 % : paiement réel, webhooks signés, livraison, uploads S3, rôles fins, CRUD admin, historique de commandes lié au compte, rate limiting distribué, tests E2E/accessibilité complets et validation juridique restent à implémenter ou configurer. Ces limites sont détaillées dans [`SECURITY.md`](./SECURITY.md) et [`PRODUCTION_CHECKLIST.md`](./PRODUCTION_CHECKLIST.md).
+La configuration des secrets, du numéro WhatsApp, du compte administrateur, de Vercel et du domaine doit être faite par le propriétaire dans les interfaces sécurisées correspondantes. Les anciennes tables de commandes/promotions sont conservées en base pour éviter une migration destructive, mais aucun code actif ne les utilise.

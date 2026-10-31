@@ -33,6 +33,8 @@ export const productVariants = pgTable("product_variants", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [uniqueIndex("product_variants_sku_idx").on(table.sku)]);
 
+// Historical checkout tables are retained to avoid a destructive migration.
+// The simplified application does not read or write them.
 export const orders = pgTable("orders", {
   id: uuid("id").defaultRandom().primaryKey(),
   customerId: text("customer_id"),
