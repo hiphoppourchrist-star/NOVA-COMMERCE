@@ -20,6 +20,6 @@
 
 ## Audit des dépendances
 
-`npm audit --omit=dev` retourne actuellement 0 vulnérabilité pour les dépendances runtime. L'audit complet signale 16 vulnérabilités modérées dans la chaîne de développement ESLint/TypeScript autour de `minimatch`; la correction automatique proposée (`npm audit fix --force`) impose une version cassante d'ESLint et n'a pas été appliquée. Une mise à jour ciblée de cet outillage devra être vérifiée séparément.
+`npm audit` et `npm audit --omit=dev` retournent actuellement 0 vulnérabilité. Les versions transitives vulnérables de `minimatch` et `esbuild` sont contraintes par des overrides ciblés dans `package.json`, sans mise à niveau cassante d'ESLint ou de Next.js.
 
 Ce document ne constitue pas une garantie de sécurité absolue.
