@@ -49,6 +49,7 @@ export default function AdminLoginPage() {
           </button>
           {error && <p role="alert" className="form-message">{error}</p>}
         </form>
+        <p className="auth-footnote"><Link href="/admin/verify-email">Recevoir un code de vérification</Link></p>
         <p className="auth-footnote">Le compte administrateur est créé et géré dans Neon Auth.</p>
       </div>
     </main>
